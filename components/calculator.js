@@ -2,14 +2,22 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 
-export default function Calculator( {updateHistory, clearHistory} ) {
+export default function Calculator( { navigation } ) {
 
   const [number1, setNumber1] = useState('');
   const [number2, setNumber2] = useState('');
   const [result, setResult] = useState('');
   
+  const [history, setHistory] =useState([]);
 
-  const plusButtonPressed = () => {
+  const updateHistory = (calculation) => {
+    setHistory([...history, calculation]);
+  }
+  const clearHistory = () => {
+    setHistory([])
+  }
+
+  function plusButtonPressed() {
     let result = parseFloat(number1) + parseFloat(number2);
     setResult(result);
     updateHistory(`${number1} + ${number2} = ${result}`);
@@ -27,7 +35,10 @@ export default function Calculator( {updateHistory, clearHistory} ) {
   }
 
   return (
-    <>
+    <View style={styles.container}>
+      <View style={styles.topBar}>
+        <Text style={styles.info}>Fill in numbers and press the desired function. Use '.' for decimal separator</Text>
+      </View>
       <View style={styles.calculator}>
         <View style={styles.inputs}>
           <TextInput
@@ -50,12 +61,33 @@ export default function Calculator( {updateHistory, clearHistory} ) {
           </View>
         </View>
         <Text style={styles.result}>Result: {result}</Text>
+        <Button title='History' onPress={() => navigation.navigate('History', {history: {history}})} />
       </View>
-    </>
+    </View>
   )
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+    marginHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  topBar: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  header: {
+    fontSize: 25,
+    color: '#fff',
+  },
+  info: {
+    color: '#eee',
+    fontStyle: 'italic'
+  },
   calculator: {
     flex: 2,
   },
@@ -66,7 +98,8 @@ const styles = StyleSheet.create({
   result: {
     color: '#fff',
     fontSize: 20,
-    textAlign: 'center'
+    textAlign: 'center',
+    margin: 20,
   },
   input: {
     width: 200, 
